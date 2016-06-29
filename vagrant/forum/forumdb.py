@@ -48,6 +48,7 @@ def AddPost(content):
     i=i+1;
     cur.execute("UPDATE posts set content='Cheese!' where content like '%spam%'");
     cur.execute("UPDATE posts set content='Cheese!' where content like '%<script>%'");
+    cur.execute("DELETE from posts where content='Cheese!'");
     DB.commit();
     DB.close();
     #t = time.strftime('%c', time.localtime())
