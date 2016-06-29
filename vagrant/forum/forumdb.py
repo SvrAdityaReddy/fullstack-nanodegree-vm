@@ -4,6 +4,7 @@
 
 import time
 import psycopg2
+import bleach
 
 ## Database connection
 #DB = psycopg2.connect("dbname=forum");
@@ -39,11 +40,15 @@ def AddPost(content):
     DB = psycopg2.connect("dbname=forum");
     cur = DB.cursor();
     t = time.strftime('%c', time.localtime())
+    cont=str(bleach.clean(content));
     global i
     #type(t);
-    cur.execute("INSERT INTO posts (content,time,id) VALUES(%s,%s,%s)" , (content,t,i+1,));
+    cur.execute("INSERT INTO posts (content,time,id) VALUES(%s,%s,%s)" , (cont,t,i+1,));
     DB.commit();
     i=i+1;
+    cur.execute("UPDATE posts set content='Cheese!' where content like '%spam%'");
+    cur.execute("UPDATE posts set content='Cheese!' where content like '%<script>%'");
+    DB.commit();
     DB.close();
     #t = time.strftime('%c', time.localtime())
     #DB.append((t, content))
