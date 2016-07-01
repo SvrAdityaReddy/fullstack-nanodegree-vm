@@ -8,7 +8,7 @@ import bleach
 
 ## Database connection
 #DB = psycopg2.connect("dbname=forum");
-i=0
+#i=0
 #cur = DB.cursor();
 
 ## Get posts from database.
@@ -41,11 +41,11 @@ def AddPost(content):
     cur = DB.cursor();
     t = time.strftime('%c', time.localtime())
     cont=str(bleach.clean(content));
-    global i
+    #global i
     #type(t);
-    cur.execute("INSERT INTO posts (content,time,id) VALUES(%s,%s,%s)" , (cont,t,i+1,));
+    cur.execute("INSERT INTO posts (content,time) VALUES(%s,%s)" , (cont,t,));
     DB.commit();
-    i=i+1;
+    #i=i+1;
     cur.execute("UPDATE posts set content='Cheese!' where content like '%spam%'");
     cur.execute("UPDATE posts set content='Cheese!' where content like '%<script>%'");
     cur.execute("DELETE from posts where content='Cheese!'");
