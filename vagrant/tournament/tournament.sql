@@ -7,6 +7,10 @@
 -- these lines here.
 create table registry (
 id serial,
-name text
+name text,
+no_matches integer,
+win integer,
+loss integer
 );
+
 

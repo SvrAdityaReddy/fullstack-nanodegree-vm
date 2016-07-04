@@ -22,14 +22,18 @@ def deletePlayers():
     DB=psycopg2.connect("dbname=tournament")
     cur=DB.cursor()
     cur.execute("delete from registry")
-    #DB.commit();
+    DB.commit();
+    DB.close();
 
 def countPlayers():
     """Returns the number of players currently registered."""
     DB=psycopg2.connect("dbname=tournament")
     cur=DB.cursor()
-    row=cur.execute("select count(*) as num from registry")
-    return row[0];
+    cur.execute("select count(*) as num from registry")
+    row=cur.fetchall();
+    #print row
+    DB.close();
+    return row[0][0];
 
 def registerPlayer(name):
     """Adds a player to the tournament database.
@@ -42,8 +46,9 @@ def registerPlayer(name):
     """
     DB=psycopg2.connect("dbname=tournament")
     cur=DB.cursor()
-    cur.execute("insert into registry (name) values (%s)",(name,));
-    #DB.commit();
+    cur.execute("insert into registry (name,no_matches,win,loss) values (%s,0,0,0)",(name,));
+    DB.commit();
+    DB.close();
 
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
@@ -58,7 +63,14 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-
+    DB=psycopg2.connect("dbname=tournament")
+    cur=DB.cursor()
+    cur.execute("select id,name,win,no_matches from registry order by win Desc");
+    rows=cur.fetchall();
+    list_tuples=[(row[0],row[1],row[2],row[3]) for row in rows]  
+    DB.commit();
+    DB.close();
+    return list_tuples
 
 def reportMatch(winner, loser):
     """Records the outcome of a single match between two players.
@@ -67,6 +79,12 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
+    DB=psycopg2.connect("dbname=tournament")
+    cur=DB.cursor()
+    cur.execute("UPDATE registry set no_matches=no_matches+1,win=win+1 where id=(%s)",(winner,));
+    cur.execute("UPDATE registry set no_matches=no_matches+1,loss=loss+1 where id=(%s)",(loser,));
+    DB.commit();
+    DB.close();    
 
 
 def swissPairings():
@@ -84,3 +102,10 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+
+#print(countPlayers());
+#registerPlayer("super hero");
+#registerPlayer("hero");
+#deletePlayers();
+#reportMatch(7, 8);
+#print(playerStandings());
