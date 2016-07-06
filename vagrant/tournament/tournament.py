@@ -15,7 +15,9 @@ def deleteMatches():
     """Remove all the match records from the database."""
     DB=psycopg2.connect("dbname=tournament")
     cur=DB.cursor()
-    #cur.execute("delete matches");
+    cur.execute("UPDATE registry set no_matches=0,win=0,loss=0");
+    DB.commit();
+    DB.close();
 
 def deletePlayers():
     """Remove all the player records from the database."""
@@ -102,6 +104,13 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+    DB=psycopg2.connect("dbname=tournament")
+    cur=DB.cursor()
+    cur.execute("select a.id, b.id, a.name,b.name from registry as a, registry as b where a.win = b.win and a.id < b.id order by a.win,b.win Desc");
+    rows=cur.fetchall();
+    print rows;
+    DB.commit();
+    DB.close();
 
 #print(countPlayers());
 #registerPlayer("super hero");
@@ -109,3 +118,4 @@ def swissPairings():
 #deletePlayers();
 #reportMatch(7, 8);
 #print(playerStandings());
+swissPairings();
