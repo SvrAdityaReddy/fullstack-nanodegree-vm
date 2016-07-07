@@ -106,11 +106,21 @@ def swissPairings():
     """
     DB=psycopg2.connect("dbname=tournament")
     cur=DB.cursor()
-    cur.execute("select a.id, b.id, a.name,b.name from registry as a, registry as b where a.win = b.win and a.id < b.id order by a.win,b.win Desc");
+    cur.execute("select id,name from registry order by win Desc");
     rows=cur.fetchall();
-    print rows;
+    length=len(rows)
+    i=0;
+    list_=[]
+    while(i < length):
+        tuple_=(rows[i][0],rows[i][1],rows[i+1][0],rows[i+1][1])
+        list_.append(tuple_)
+        i=i+2
+    #print length;
+    #print rows;
+    #print list_;
     DB.commit();
     DB.close();
+    return list_;
 
 #print(countPlayers());
 #registerPlayer("super hero");
@@ -118,4 +128,4 @@ def swissPairings():
 #deletePlayers();
 #reportMatch(7, 8);
 #print(playerStandings());
-swissPairings();
+#swissPairings();
